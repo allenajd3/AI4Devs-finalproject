@@ -4,6 +4,7 @@ import com.ayg.presentaciones.model.GlobalSettings;
 import com.ayg.presentaciones.model.Project;
 import com.ayg.presentaciones.model.ProjectStatus;
 import com.ayg.presentaciones.model.Slide;
+import com.ayg.presentaciones.model.SlideStatus;
 import com.ayg.presentaciones.repository.ProjectRepository;
 import com.ayg.presentaciones.repository.SlideRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,20 +40,29 @@ public class ContentProcessingServiceImpl implements ContentProcessingService {
     private final SlideRepository slideRepository;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final ImageService imageService;
+    private final StorageService storageService;
+    private final boolean imageGenerationEnabled;
 
     public ContentProcessingServiceImpl(
             @Value("${spring.ai.openai.api-key}") String apiKey,
             @Value("${spring.ai.openai.chat.options.model:gpt-4o}") String model,
+            @Value("${app.image-generation.enabled:true}") boolean imageGenerationEnabled,
             GlobalSettingsService settingsService,
             ProjectRepository projectRepository,
-            SlideRepository slideRepository) {
+            SlideRepository slideRepository,
+            ImageService imageService,
+            StorageService storageService) {
         this.apiKey = apiKey;
         this.model = model;
+        this.imageGenerationEnabled = imageGenerationEnabled;
         this.settingsService = settingsService;
         this.projectRepository = projectRepository;
         this.slideRepository = slideRepository;
         this.objectMapper = new ObjectMapper();
         this.restTemplate = new RestTemplate();
+        this.imageService = imageService;
+        this.storageService = storageService;
     }
 
     /**
@@ -79,6 +89,7 @@ public class ContentProcessingServiceImpl implements ContentProcessingService {
         log.info("========================================");
         log.info("Iniciando procesamiento de contenido para proyecto: {}", project.getId());
         log.info("Pipeline: 2-phase LLM (Analysis → Outline Generation)");
+        log.info("Generación de imágenes: {}", imageGenerationEnabled ? "ACTIVADA" : "DESACTIVADA");
         log.info("========================================");
         
         GlobalSettings settings = settingsService.getSettings();
@@ -115,13 +126,47 @@ public class ContentProcessingServiceImpl implements ContentProcessingService {
                     slideData.content(),
                     slideData.description()  // description maps to imagePrompt
                 );
-                slideRepository.save(slide);
                 
-                log.info("Slide {} guardada: title='{}', content length={}, imagePrompt length={}", 
-                    slideData.slideNumber(),
-                    slideData.title(),
-                    slideData.content().length(),
-                    slideData.description().length());
+                // Save initial slide
+                slide = slideRepository.save(slide);
+                
+                // Build and log the image generation prompt (always, for debugging)
+                String imagePrompt = buildImagePrompt(slideData.title(), slideData.content(), slideData.description(), settings.getVisualStyle());
+                log.info("=== PROMPT PARA IMAGEN SLIDE {} ===", slideData.slideNumber());
+                log.info("{}", imagePrompt);
+                log.info("====================================");
+                
+                // Generate Image (if enabled)
+                if (imageGenerationEnabled) {
+                    try {
+                        progressCallback.accept(String.format("Generando imagen %d/%d...", slideData.slideNumber(), slideCount));
+                        
+                        byte[] imageBytes = imageService.generateImage(
+                            slideData.title(),
+                            slideData.content(),
+                            slideData.description(),
+                            settings.getVisualStyle()
+                        );
+                        if (imageBytes != null) {
+                            String filename = "project-" + project.getId() + "-slide-" + slide.getOrder() + ".png";
+                            String imageUrl = storageService.store(imageBytes, filename);
+                            
+                            slide.setImageUrl(imageUrl);
+                            slide.setStatus(SlideStatus.COMPLETED);
+                            slideRepository.save(slide);
+                            log.info("Imagen generada para slide {}: {}", slide.getOrder(), imageUrl);
+                        } else {
+                            log.warn("No se generó imagen para slide {}", slide.getOrder());
+                        }
+                    } catch (Exception e) {
+                        log.error("Error generando imagen para slide {}", slide.getOrder(), e);
+                        // Continue processing other slides
+                    }
+                } else {
+                    log.info("Generación de imágenes desactivada - Slide {} permanece en estado PENDING", slide.getOrder());
+                }
+                
+                log.info("Slide {} procesada completamente", slideData.slideNumber());
             }
 
             // Step 4: Mark project as completed
@@ -412,5 +457,19 @@ public class ContentProcessingServiceImpl implements ContentProcessingService {
             "5. Las descripciones deben ser en inglés y muy detalladas para generar imágenes de alta calidad",
             analysis
         );
+    }
+    
+    /**
+     * Construye el prompt simplificado para la generación de imágenes.
+     * Replica la lógica de OpenAIImageService para que el log coincida con el prompt enviado a la API.
+     */
+    private String buildImagePrompt(String title, String content, String description, String visualStyle) {
+        String intro = "Professional presentation slide design, 16:9 aspect ratio, high quality corporate design.";
+        String style = (visualStyle != null && !visualStyle.isEmpty())
+                ? visualStyle
+                : "Modern minimalist style with clean typography.";
+        String desc = (description != null) ? description : "";
+        String closing = "Ultra high resolution, sharp text, professional business presentation.";
+        return intro + " " + style + " " + desc + " " + closing;
     }
 }
