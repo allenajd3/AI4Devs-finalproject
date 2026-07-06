@@ -1,6 +1,5 @@
 # Backend (Maven)
 backend/target/
-backend/data/
 backend/.classpath
 backend/.project
 backend/.settings/
@@ -47,7 +46,3 @@ logs/
 
 # API Keys (no hacer commit de estas!)
 OPENAI_SETUP.md
-test-api-complete.ps1
-test-api.ps1
-test-refactor-complete.ps1
-test-refactor-verification.ps1

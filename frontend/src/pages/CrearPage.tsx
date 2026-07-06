@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateProject } from '../hooks/useProjects';
+import { useContentGeneration } from '../hooks/useContentGeneration';
+import { GenerationProgress } from '../components/GenerationProgress';
 
 export default function CrearPage() {
-  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
   const createProject = useCreateProject();
+  const { isGenerating, progress, error, startGeneration, reset } = useContentGeneration();
 
   const isValidContent = content.length >= 100;
 
@@ -24,14 +26,32 @@ export default function CrearPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidContent || !title.trim()) return;
+    if (!isValidContent) return;
 
     try {
-      const project = await createProject.mutateAsync({ title, content });
+      // Create project with temporary title
+      const project = await createProject.mutateAsync({ 
+        title: 'Nuevo Proyecto', 
+        content 
+      });
+
+      // Start content generation
+      await startGeneration(project.id);
+
+      // Navigate to project detail
       navigate(`/proyectos/${project.id}`);
     } catch (error) {
       console.error('Error creating project:', error);
     }
+  };
+
+  const handleRetry = async () => {
+    // Retry logic could be implemented here if needed
+    reset();
+  };
+
+  const handleClose = () => {
+    reset();
   };
 
   return (
@@ -39,21 +59,6 @@ export default function CrearPage() {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Crear Nueva Presentación</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-            Título del Proyecto
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Nombre del proyecto"
-            required
-          />
-        </div>
-
         <div>
           <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
             Transcripción
@@ -90,14 +95,24 @@ export default function CrearPage() {
 
         <button
           type="submit"
-          disabled={!isValidContent || !title.trim() || createProject.isPending}
+          disabled={!isValidContent || createProject.isPending || isGenerating}
           className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
             hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
             transition-colors"
         >
-          {createProject.isPending ? 'Generando...' : 'Generar Presentación'}
+          {createProject.isPending ? 'Creando proyecto...' : 'Generar Presentación'}
         </button>
       </form>
+
+      {/* Generation Progress Modal */}
+      {isGenerating && (
+        <GenerationProgress
+          progress={progress}
+          error={error}
+          onRetry={handleRetry}
+          onClose={handleClose}
+        />
+      )}
     </div>
   );
 }

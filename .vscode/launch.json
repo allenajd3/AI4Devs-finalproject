@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Backend (Spring Boot)",
+      "request": "launch",
+      "mainClass": "com.ayg.presentaciones.PresentacionesApplication",
+      "projectName": "presentaciones",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "JAVA_HOME": "C:\\JAVA\\openjdk-24"
+      },
+      "vmArgs": "-Dspring.profiles.active=dev"
+    },
+    {
+      "type": "java",
+      "name": "Debug Backend with OpenAI",
+      "request": "launch",
+      "mainClass": "com.ayg.presentaciones.PresentacionesApplication",
+      "projectName": "presentaciones",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "JAVA_HOME": "C:\\JAVA\\openjdk-24",
+        "OPENAI_API_KEY": "${input:openaiApiKey}"
+      },
+      "vmArgs": "-Dspring.profiles.active=dev"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "openaiApiKey",
+      "type": "promptString",
+      "description": "OpenAI API Key",
+      "password": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (Backend + Frontend)",
+      "configurations": [],
+      "preLaunchTask": "Start All Services",
+      "presentation": {
+        "hidden": false,
+        "group": "1_run",
+        "order": 1
+      }
+    }
+  ]
+}

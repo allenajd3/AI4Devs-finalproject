@@ -1,11 +1,17 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProjectById, useDeleteProject } from '../hooks/useProjects';
+import { useSlides } from '../hooks/useSlides';
+import { useContentGeneration } from '../hooks/useContentGeneration';
+import { SlideCard } from '../components/SlideCard';
+import { GenerationProgress } from '../components/GenerationProgress';
 
 export default function ProyectoDetallePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: project, isLoading, error } = useProjectById(id!);
+  const { data: slides, isLoading: slidesLoading } = useSlides(id);
   const deleteProject = useDeleteProject();
+  const { isGenerating, progress, error: genError, startGeneration, reset } = useContentGeneration();
 
   const handleDelete = async () => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
@@ -18,6 +24,21 @@ export default function ProyectoDetallePage() {
     } catch (error) {
       console.error('Error deleting project:', error);
     }
+  };
+
+  const handleGenerateContent = async () => {
+    if (!id) return;
+    await startGeneration(id);
+    // Refresh the page after generation
+    window.location.reload();
+  };
+
+  const handleRetry = () => {
+    reset();
+  };
+
+  const handleClose = () => {
+    reset();
   };
 
   if (isLoading) {
@@ -60,24 +81,61 @@ export default function ProyectoDetallePage() {
       {/* Slides Section */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Diapositivas</h2>
-        <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-          <svg
-            className="mx-auto h-16 w-16 text-gray-400 mb-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          <p className="text-gray-600 text-lg font-medium">Coming Soon</p>
-          <p className="text-gray-500 text-sm mt-2">Las diapositivas se generarán próximamente</p>
-        </div>
+        
+        {slidesLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-100 rounded-lg h-80 animate-pulse"
+              ></div>
+            ))}
+          </div>
+        ) : slides && slides.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {slides.map((slide) => (
+              <SlideCard key={slide.id} slide={slide} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+            <svg
+              className="mx-auto h-16 w-16 text-gray-400 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="text-gray-600 text-lg font-medium mb-2">Sin diapositivas generadas</p>
+            <p className="text-gray-500 text-sm mb-4">
+              Este proyecto aún no tiene diapositivas. Genera el contenido para crear las diapositivas.
+            </p>
+            <button
+              onClick={handleGenerateContent}
+              disabled={isGenerating}
+              className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+            >
+              {isGenerating ? 'Generando...' : 'Generar Contenido'}
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Generation Progress Modal */}
+      {isGenerating && (
+        <GenerationProgress
+          progress={progress}
+          error={genError}
+          onRetry={handleRetry}
+          onClose={handleClose}
+        />
+      )}
 
       {/* Original Content */}
       <div className="bg-white rounded-lg shadow p-6">

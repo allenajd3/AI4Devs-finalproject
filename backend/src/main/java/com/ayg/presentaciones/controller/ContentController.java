@@ -63,6 +63,20 @@ public class ContentController {
                         .data(Map.of("projectId", id.toString())));
                 emitter.complete();
             } catch (Exception e) {
+                try {
+                    String errorMessage = "Error durante la generación";
+                    if (e.getMessage() != null && e.getMessage().contains("insufficient_quota")) {
+                        errorMessage = "Error: Tu cuenta de OpenAI no tiene créditos disponibles. Por favor, verifica tu plan y añade créditos.";
+                    } else if (e.getMessage() != null && e.getMessage().contains("OpenAI")) {
+                        errorMessage = "Error de OpenAI: " + e.getMessage();
+                    }
+                    
+                    emitter.send(SseEmitter.event()
+                            .name("error")
+                            .data(errorMessage));
+                } catch (IOException ioException) {
+                    // No podemos enviar el error, solo completar con error
+                }
                 emitter.completeWithError(e);
             }
         });
