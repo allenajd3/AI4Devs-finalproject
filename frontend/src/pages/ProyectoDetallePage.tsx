@@ -44,7 +44,7 @@ export default function ProyectoDetallePage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ayg-primary"></div>
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function ProyectoDetallePage() {
             <button
               onClick={handleGenerateContent}
               disabled={isGenerating}
-              className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+              className="px-6 py-2 bg-ayg-primary text-white font-semibold rounded-lg hover:bg-ayg-primary-dark disabled:bg-gray-300 transition-colors"
             >
               {isGenerating ? 'Generando...' : 'Generar Contenido'}
             </button>

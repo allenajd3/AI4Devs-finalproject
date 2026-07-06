@@ -55,7 +55,7 @@ export default function CrearPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto pb-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Crear Nueva Presentación</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,7 +68,7 @@ export default function CrearPage() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={12}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-transparent"
             placeholder="Pega tu transcripción aquí (mínimo 100 caracteres)..."
           />
           <div className="mt-2 text-sm text-gray-500">
@@ -88,20 +88,22 @@ export default function CrearPage() {
               file:mr-4 file:py-2 file:px-4
               file:rounded-lg file:border-0
               file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
+              file:bg-ayg-primary-light file:text-ayg-primary-dark
+              hover:file:bg-ayg-primary"
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={!isValidContent || createProject.isPending || isGenerating}
-          className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
-            hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
-            transition-colors"
-        >
-          {createProject.isPending ? 'Creando proyecto...' : 'Generar Presentación'}
-        </button>
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={!isValidContent || createProject.isPending || isGenerating}
+            className="w-full px-6 py-4 text-lg font-bold rounded-lg shadow-lg transition-all
+              bg-ayg-primary text-white hover:bg-ayg-primary-dark hover:shadow-xl
+              disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed disabled:shadow-none"
+          >
+            {createProject.isPending ? 'Creando proyecto...' : 'Generar Presentación'}
+          </button>
+        </div>
       </form>
 
       {/* Generation Progress Modal */}

@@ -30,7 +30,7 @@ export function GenerationProgress({
             {error ? 'Error en la Generación' : 'Generando Presentación'}
           </h2>
           {!error && (
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-ayg-primary"></div>
           )}
         </div>
 
@@ -43,7 +43,7 @@ export function GenerationProgress({
               {onRetry && (
                 <button
                   onClick={onRetry}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-ayg-primary text-white rounded-lg hover:bg-ayg-primary-dark transition-colors"
                 >
                   Reintentar
                 </button>
@@ -71,7 +71,7 @@ export function GenerationProgress({
                   key={index}
                   className="flex items-start gap-2 text-sm text-gray-700"
                 >
-                  <span className="text-blue-600 font-medium">
+                  <span className="text-ayg-primary font-medium">
                     {index + 1}.
                   </span>
                   <span>{message}</span>

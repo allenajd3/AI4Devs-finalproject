@@ -7,7 +7,7 @@ export default function ProyectosPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ayg-primary"></div>
       </div>
     );
   }
@@ -27,7 +27,7 @@ export default function ProyectosPage() {
         <p className="text-gray-600 mb-6">Crea tu primera presentación para comenzar</p>
         <a
           href="/crear"
-          className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+          className="inline-block px-6 py-3 bg-ayg-primary text-white font-semibold rounded-lg hover:bg-ayg-primary-dark"
         >
           Crear Presentación
         </a>

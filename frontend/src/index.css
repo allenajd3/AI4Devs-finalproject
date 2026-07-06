@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@theme {
+  /* Colores Corporativos A&G */
+  --color-ayg-primary: #5F8FA3;
+  --color-ayg-primary-dark: #4A7289;
+  --color-ayg-primary-light: #7FA5B8;
+}

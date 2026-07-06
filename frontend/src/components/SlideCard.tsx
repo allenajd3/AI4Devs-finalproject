@@ -6,7 +6,7 @@ interface SlideCardProps {
 
 const statusColors = {
   PENDING: 'bg-gray-100 text-gray-700',
-  GENERATING: 'bg-blue-100 text-blue-700',
+  GENERATING: 'bg-ayg-primary-light text-ayg-primary-dark',
   COMPLETED: 'bg-green-100 text-green-700',
   ERROR: 'bg-red-100 text-red-700',
 };
@@ -52,7 +52,7 @@ export function SlideCard({ slide }: SlideCardProps) {
       {/* Content */}
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-semibold text-sm">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-ayg-primary text-white font-semibold text-sm">
             {slide.order}
           </span>
           <span
