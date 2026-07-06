@@ -12,6 +12,7 @@
 4. [Pipeline de generación IA (implementación)](#4-pipeline-de-generación-ia-implementación)
 5. [Frontend y UI](#5-frontend-y-ui)
 6. [Configuración y ajustes globales](#6-configuración-y-ajustes-globales)
+7. [Proceso de desarrollo spec-driven con OpenSpec](#7-proceso-de-desarrollo-spec-driven-con-openspec)
 
 ---
 
@@ -467,6 +468,98 @@ Principios que guían tu trabajo:
 ```
 
 **Nota:** Esta comparativa surgió tras la primera demo del MVP, donde el output era correcto pero demasiado genérico. El asistente identificó 3 mejoras concretas al PROMPT B (añadir contexto de audiencia, especificar el tono y pedir density de información por slide) que se incorporaron directamente.
+
+---
+
+## 7. Proceso de desarrollo spec-driven con OpenSpec
+
+Toda la implementación se ha realizado siguiendo el flujo **spec-driven** de [OpenSpec](https://github.com/Fission-AI/OpenSpec) con Claude Code y Cursor. Las skills y comandos (`/opsx:new`, `/opsx:ff`, `/opsx:apply`, `/opsx:archive`) están versionados en `.claude/` y `.cursor/`. Cada funcionalidad siguió el mismo ciclo:
+
+1. **Proposal** — describir el cambio en lenguaje natural; el agente genera `proposal.md` (why / what changes / capabilities).
+2. **Design + Specs + Tasks** — el agente deriva el diseño técnico, las delta-specs por capacidad y la lista de tareas (< 2h cada una).
+3. **Apply** — implementación guiada tarea a tarea, revisando el código generado en cada paso.
+4. **Archive** — al validar la funcionalidad, el change se archiva y las specs principales se sincronizan.
+
+Los 14 changes completados están en [`openspec/changes/archive/`](openspec/changes/archive/), y las specs resultantes (estado actual del sistema, 15 capacidades) en [`openspec/specs/`](openspec/specs/).
+
+### Prompt 7.1 — Definición de las specs del MVP
+
+**Herramienta:** Claude Code + OpenSpec (`/opsx:new`)
+
+**Prompt:**
+```
+/opsx:new Quiero definir las specs del MVP a partir del PRD (docs/PRD-AYGPresentaciones.md).
+Las capacidades que veo son: procesamiento de contenido con LLM, generación de imágenes,
+ensamblado en PDF, gestión de proyectos, configuración global del sistema y la UI.
+No implementes nada todavía: solo las specs con sus requisitos y escenarios,
+para que sirvan de base a los changes de implementación.
+```
+
+**Nota:** Este primer change (`define-mvp-specs`) estableció el contrato del sistema completo antes de escribir una sola línea de código. Los changes posteriores referencian estas capacidades como "modified" o añaden nuevas.
+
+### Prompt 7.2 — Change de implementación del pipeline de contenido
+
+**Herramienta:** Claude Code + OpenSpec (`/opsx:ff`)
+
+**Prompt:**
+```
+/opsx:ff Implementar el procesamiento de contenido: el MVP necesita transformar la
+transcripción cruda en una estructura de presentación. Integración con OpenAI
+(modelo configurable en application.properties, por defecto GPT-4o). Nueva entidad
+Slide (id, projectId, order, imagePrompt, imageUrl, status) y GlobalSettings para
+system prompt, orientación del contenido y estilo visual. El servicio debe:
+limpiar y analizar la transcripción, reorganizar el contenido en estructura
+intro/nudo/desenlace (no lineal), generar un título corto y entre 1 y 12 slides.
+Ejecución síncrona con feedback por pasos para integrarlo luego con SSE.
+```
+
+**Nota:** El comando `ff` (fast-forward) genera proposal, design, specs y tasks de una vez. Tras revisar los artefactos se lanzó `/opsx:apply` y el agente implementó las tareas en orden (modelo → servicio → controller), pidiendo confirmación en cada bloque.
+
+### Prompt 7.3 — Change de UX a partir de una molestia concreta
+
+**Herramienta:** Cursor + OpenSpec (`/opsx-new`)
+
+**Prompt:**
+```
+El menú lateral ocupa siempre 256px y me quita espacio al revisar slides.
+Quiero poder colapsarlo: en modo colapsado solo iconos con tooltip, el logo
+en tamaño pequeño centrado, el footer oculto, y que el estado persista en
+localStorage. La transición debe ser suave (CSS).
+```
+
+**Nota:** Ejemplo del ciclo completo para un cambio pequeño (`collapsible-sidebar`): la descripción informal de una molestia de uso se convirtió en proposal con requisitos verificables, se implementó en una sesión y se archivó. Todo cambio, por pequeño que sea, deja rastro en `openspec/changes/archive/`.
+
+### Prompt 7.4 — Archivado y sincronización de specs
+
+**Herramienta:** Claude Code + OpenSpec (`/opsx:archive`)
+
+**Prompt:**
+```
+/opsx:archive He probado la generación de imágenes end-to-end y funciona
+(incluido el caso de fallo de una imagen individual sin bloquear el resto).
+Archiva el change implement-image-generation y sincroniza las specs.
+```
+
+**Nota:** El archivado mueve el change a `archive/` con fecha y aplica las delta-specs sobre `openspec/specs/`, manteniendo las specs principales como fuente de verdad del estado actual del sistema.
+
+### Registro de changes completados
+
+| Fecha | Change | Alcance |
+|---|---|---|
+| 2026-02-09 | `define-mvp-specs` | Specs iniciales de las 6 capacidades del MVP |
+| 2026-02-09 | `config-base-backend` | Base Spring Boot + Java 21 (TK-001) |
+| 2026-02-09 | `implement-project-mgmt` | CRUD de proyectos con DTOs (TK-002) |
+| 2026-02-09 | `frontend-mvp-ui` | React + Vite + Tailwind + rutas (TK-003, TK-004) |
+| 2026-02-10 | `implement-content-processing` | Pipeline GPT-4o de 2 fases (TK-005, TK-006) |
+| 2026-02-10 | `integrate-frontend-content-processing` | SSE + modal de progreso (TK-007, TK-008) |
+| 2026-02-10 | `db-h2-file` | H2 persistente en fichero |
+| 2026-02-10 | `ui-ayg` | Identidad visual corporativa |
+| 2026-02-12 | `config-page` | Página de ajustes (TK-011, TK-012) |
+| 2026-02-12 | `refactor-content-generation` | Records SlideData/SlideOutline |
+| 2026-02-12 | `implement-image-generation` | OpenAI Images + storage local (TK-009, TK-010) |
+| 2026-02-12 | `image-generation-prompt-mods` | Prompts de imagen con estilo visual global |
+| 2026-02-16 | `dark-mode` | Modo oscuro persistido (US-006) |
+| 2026-03-06 | `collapsible-sidebar` | Sidebar colapsable (US-007) |
 
 ---
 
