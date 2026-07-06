@@ -43,6 +43,7 @@ public class GlobalSettingsService {
         settings.setSystemPrompt(DEFAULT_SYSTEM_PROMPT);
         settings.setContentOrientation(DEFAULT_CONTENT_ORIENTATION);
         settings.setVisualStyle(DEFAULT_VISUAL_STYLE);
+        settings.setDarkMode(false);
         return repository.save(settings);
     }
 }

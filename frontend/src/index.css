@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Dark mode activado por clase .dark en el raíz (html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Colores Corporativos A&G */
   --color-ayg-primary: #5F8FA3;

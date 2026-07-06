@@ -18,6 +18,9 @@ public class GlobalSettings {
     @Column(columnDefinition = "TEXT")
     private String visualStyle;
 
+    @Column(nullable = true)
+    private Boolean darkMode = false;
+
     public GlobalSettings() {
     }
 
@@ -51,5 +54,13 @@ public class GlobalSettings {
 
     public void setVisualStyle(String visualStyle) {
         this.visualStyle = visualStyle;
+    }
+
+    public boolean isDarkMode() {
+        return Boolean.TRUE.equals(darkMode);
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
     }
 }

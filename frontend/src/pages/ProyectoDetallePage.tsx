@@ -51,8 +51,8 @@ export default function ProyectoDetallePage() {
 
   if (error || !project) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">Error al cargar el proyecto.</p>
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <p className="text-red-800 dark:text-red-200">Error al cargar el proyecto.</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function ProyectoDetallePage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{project.title}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">{project.title}</h1>
         <div className="flex gap-4">
           <button
             disabled

@@ -5,4 +5,5 @@ export interface GlobalSettings {
   systemPrompt: string | null;
   contentOrientation: string | null;
   visualStyle: string | null;
+  darkMode: boolean;
 }

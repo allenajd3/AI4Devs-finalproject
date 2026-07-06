@@ -36,9 +36,9 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar con diseño profesional */}
-      <aside className="w-64 bg-gradient-to-b from-[#5F8FA3] to-[#4A7289] shadow-xl flex flex-col">
+      <aside className="w-64 bg-gradient-to-b from-[#5F8FA3] to-[#4A7289] dark:from-gray-900 dark:to-gray-800 shadow-xl flex flex-col">
         {/* Header con Logo y Título */}
         <div className="p-6 bg-white/10 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-3">
@@ -89,7 +89,7 @@ export default function Layout() {
       </aside>
 
       {/* Main Content con diseño mejorado */}
-      <main className="flex-1 overflow-auto bg-gray-50">
+      <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <div className="max-w-7xl mx-auto p-8">
           <Outlet />
         </div>

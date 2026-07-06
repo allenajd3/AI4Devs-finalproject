@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Layout from './components/Layout';
+import ThemeSync from './components/ThemeSync';
 import CrearPage from './pages/CrearPage';
 import ProyectosPage from './pages/ProyectosPage';
 import ProyectoDetallePage from './pages/ProyectoDetallePage';
@@ -19,6 +20,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ThemeSync />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/crear" replace />} />

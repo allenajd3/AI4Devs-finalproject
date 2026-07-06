@@ -20,9 +20,9 @@ const statusLabels = {
 
 export function SlideCard({ slide }: SlideCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
       {/* Image Placeholder */}
-      <div className="bg-gray-100 h-48 flex items-center justify-center">
+      <div className="bg-gray-100 dark:bg-gray-700 h-48 flex items-center justify-center">
         {slide.imageUrl ? (
           <img
             src={slide.imageUrl}
@@ -30,7 +30,7 @@ export function SlideCard({ slide }: SlideCardProps) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="text-center text-gray-400">
+          <div className="text-center text-gray-400 dark:text-gray-500">
             <svg
               className="w-16 h-16 mx-auto mb-2"
               fill="none"
@@ -65,8 +65,8 @@ export function SlideCard({ slide }: SlideCardProps) {
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-900">Prompt</h3>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Prompt</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {slide.imagePrompt}
           </p>
         </div>

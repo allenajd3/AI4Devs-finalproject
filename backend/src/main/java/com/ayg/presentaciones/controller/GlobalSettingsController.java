@@ -23,7 +23,8 @@ public class GlobalSettingsController {
         GlobalSettingsDto dto = new GlobalSettingsDto(
             settings.getSystemPrompt(),
             settings.getContentOrientation(),
-            settings.getVisualStyle()
+            settings.getVisualStyle(),
+            settings.isDarkMode()
         );
         return ResponseEntity.ok(dto);
     }
@@ -34,13 +35,15 @@ public class GlobalSettingsController {
         settings.setSystemPrompt(dto.systemPrompt());
         settings.setContentOrientation(dto.contentOrientation());
         settings.setVisualStyle(dto.visualStyle());
-        
+        settings.setDarkMode(dto.darkMode() != null ? dto.darkMode() : false);
+
         GlobalSettings updated = settingsService.updateSettings(settings);
-        
+
         GlobalSettingsDto response = new GlobalSettingsDto(
             updated.getSystemPrompt(),
             updated.getContentOrientation(),
-            updated.getVisualStyle()
+            updated.getVisualStyle(),
+            updated.isDarkMode()
         );
         return ResponseEntity.ok(response);
     }

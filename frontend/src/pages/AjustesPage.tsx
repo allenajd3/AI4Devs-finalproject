@@ -18,6 +18,7 @@ export default function AjustesPage() {
     systemPrompt: null,
     contentOrientation: null,
     visualStyle: null,
+    darkMode: false,
   });
 
   // Estado para mensajes de feedback (success/error)
@@ -32,13 +33,20 @@ export default function AjustesPage() {
   // Mutation para actualizar configuración
   const updateMutation = useMutation({
     mutationFn: settingsApi.updateSettings,
-    onSuccess: () => {
+    onSuccess: (updatedSettings) => {
+      // Aplicar tema de inmediato para que el fondo cambie al guardar
+      const root = document.documentElement;
+      if (updatedSettings?.darkMode) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
       // Invalidar cache para refrescar datos
       queryClient.invalidateQueries({ queryKey: ['settings'] });
-      
+
       // Mostrar mensaje de éxito
       setMessage({ type: 'success', text: 'Configuración guardada correctamente' });
-      
+
       // Auto-dismiss después de 4 segundos
       setTimeout(() => setMessage(null), 4000);
     },
@@ -56,15 +64,16 @@ export default function AjustesPage() {
         systemPrompt: settings.systemPrompt || null,
         contentOrientation: settings.contentOrientation || null,
         visualStyle: settings.visualStyle || null,
+        darkMode: settings.darkMode ?? false,
       });
     }
   }, [settings]);
 
   // Handler para cambios en los campos
-  const handleChange = (field: keyof GlobalSettings, value: string) => {
+  const handleChange = (field: keyof GlobalSettings, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value || null,
+      [field]: field === 'darkMode' ? value : ((value as string) || null),
     }));
   };
 
@@ -78,10 +87,10 @@ export default function AjustesPage() {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Ajustes de Generación</h1>
-        <div className="bg-white rounded-lg shadow p-12 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Ajustes de Generación</h1>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-ayg-primary"></div>
-          <p className="text-gray-600 mt-4">Cargando configuración...</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-4">Cargando configuración...</p>
         </div>
       </div>
     );
@@ -91,8 +100,8 @@ export default function AjustesPage() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Ajustes de Generación</h1>
-        <div className="bg-white rounded-lg shadow p-12">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Ajustes de Generación</h1>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
             <p className="text-red-800 font-medium">No se pudo cargar la configuración</p>
             <p className="text-red-600 text-sm mt-1">{(error as any).message}</p>
@@ -110,13 +119,13 @@ export default function AjustesPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Ajustes de Generación</h1>
-      
-      <div className="bg-white rounded-lg shadow p-8">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Ajustes de Generación</h1>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campo 1: Prompt del Sistema */}
           <div>
-            <label htmlFor="systemPrompt" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="systemPrompt" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <span className="text-xl">📝</span>
               Prompt del Sistema
             </label>
@@ -126,16 +135,16 @@ export default function AjustesPage() {
               value={formData.systemPrompt || ''}
               onChange={(e) => handleChange('systemPrompt', e.target.value)}
               placeholder={PLACEHOLDERS.systemPrompt}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Define el contexto general y tono para las presentaciones
             </p>
           </div>
 
           {/* Campo 2: Orientación del Contenido */}
           <div>
-            <label htmlFor="contentOrientation" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="contentOrientation" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <span className="text-xl">🎯</span>
               Orientación del Contenido
             </label>
@@ -145,16 +154,16 @@ export default function AjustesPage() {
               value={formData.contentOrientation || ''}
               onChange={(e) => handleChange('contentOrientation', e.target.value)}
               placeholder={PLACEHOLDERS.contentOrientation}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               El enfoque que se quiere dar a las presentaciones
             </p>
           </div>
 
           {/* Campo 3: Estilo Visual */}
           <div>
-            <label htmlFor="visualStyle" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="visualStyle" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <span className="text-xl">🎨</span>
               Estilo Visual
             </label>
@@ -164,11 +173,38 @@ export default function AjustesPage() {
               value={formData.visualStyle || ''}
               onChange={(e) => handleChange('visualStyle', e.target.value)}
               placeholder={PLACEHOLDERS.visualStyle}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ayg-primary focus:border-ayg-primary transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Describe el aspecto gráfico deseado para las diapositivas
             </p>
+          </div>
+
+          {/* Modo oscuro */}
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800/50">
+            <label htmlFor="darkMode" className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+              <span className="text-xl">🌙</span>
+              Modo oscuro
+            </label>
+            <button
+              type="button"
+              id="darkMode"
+              role="switch"
+              aria-checked={formData.darkMode}
+              onClick={() => handleChange('darkMode', !formData.darkMode)}
+              className={`
+                relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ayg-primary focus:ring-offset-2
+                ${formData.darkMode ? 'bg-ayg-primary' : 'bg-gray-200 dark:bg-gray-600'}
+              `}
+            >
+              <span
+                className={`
+                  pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                  ${formData.darkMode ? 'translate-x-5' : 'translate-x-1'}
+                `}
+              />
+            </button>
           </div>
 
           {/* Mensaje de feedback (success o error) */}
