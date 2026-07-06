@@ -1,0 +1,53 @@
+# Backend (Maven)
+backend/target/
+backend/data/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.factorypath
+*.class
+*.jar
+*.war
+*.ear
+
+# Frontend (Node)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.cache/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/launch.json.user
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# API Keys (no hacer commit de estas!)
+OPENAI_SETUP.md
+test-api-complete.ps1
+test-api.ps1
+test-refactor-complete.ps1
+test-refactor-verification.ps1
