@@ -1,17 +1,5 @@
 package com.ayg.presentaciones.controller;
 
-import com.ayg.presentaciones.dto.SlideResponse;
-import com.ayg.presentaciones.model.Project;
-import com.ayg.presentaciones.model.Slide;
-import com.ayg.presentaciones.repository.ProjectRepository;
-import com.ayg.presentaciones.repository.SlideRepository;
-import com.ayg.presentaciones.service.ContentProcessingService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +7,22 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import com.ayg.presentaciones.dto.SlideResponse;
+import com.ayg.presentaciones.model.Project;
+import com.ayg.presentaciones.model.Slide;
+import com.ayg.presentaciones.repository.ProjectRepository;
+import com.ayg.presentaciones.repository.SlideRepository;
+import com.ayg.presentaciones.service.ContentProcessingService;
 
 @RestController
 @RequestMapping("/api/projects")

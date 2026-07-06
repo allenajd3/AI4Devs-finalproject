@@ -1,5 +1,6 @@
 # Backend (Maven)
 backend/target/
+backend/data/
 backend/.classpath
 backend/.project
 backend/.settings/
