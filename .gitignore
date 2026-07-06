@@ -51,3 +51,6 @@ test-api-complete.ps1
 test-api.ps1
 test-refactor-complete.ps1
 test-refactor-verification.ps1
+
+# Toolchain local (Maven portable, etc.)
+.tools/
