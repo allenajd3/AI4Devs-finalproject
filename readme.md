@@ -33,11 +33,12 @@ AyG PresentacionesIA automatiza la creación de presentaciones ejecutivas profes
 
 ### **0.4. URL del proyecto:**
 
-No disponible en esta entrega — se proporcionará en la Entrega 2 junto con el despliegue del entorno.
+No disponible — el proyecto se ejecuta en entorno local. Ver instrucciones de instalación en la sección 1.4.
 
 ### **0.5. URL o archivo comprimido del repositorio**
 
 - Repositorio de entrega: https://github.com/allenajd3/AI4Devs-finalproject
+- Repositorio del código fuente: https://github.com/allenajd3/aygPresentacionesIA
 
 ---
 
@@ -59,24 +60,83 @@ AyG PresentacionesIA resuelve un problema de productividad muy concreto en entor
 
 | # | Funcionalidad | Descripción | Estado |
 |---|---|---|---|
-| F-01 | Ingesta de transcripción | Texto pegado directamente o carga de archivo `.txt` | 📋 Pendiente |
-| F-02 | Análisis IA (Fase 1) | GPT-4o extrae estructura, puntos clave, métricas y temas visuales | 📋 Pendiente |
-| F-03 | Generación de outline (Fase 2) | GPT-4o crea 10-15 slides con título, contenido (ES) y description (EN) | 📋 Pendiente |
-| F-04 | Generación de imágenes | Una imagen por slide generada vía OpenAI Image API | 📋 Pendiente |
-| F-05 | Progreso en tiempo real | Server-Sent Events muestran cada paso de la generación al usuario | 📋 Pendiente |
-| F-06 | Registro e inicio de sesión | Autenticación con email/contraseña y JWT; proyectos privados por usuario | 📋 Pendiente |
-| F-07 | Gestión de proyectos | Crear, listar, ver detalle y eliminar presentaciones | 📋 Pendiente |
-| F-08 | Configuración global | System prompt, orientación de contenido, estilo visual, dark mode | 📋 Pendiente |
-| F-09 | Modo oscuro/claro | Toggle que persiste en base de datos y se aplica globalmente | 📋 Pendiente |
-| F-10 | Exportación a PDF | Descarga de la presentación completa | 📋 Pendiente |
+| F-01 | Ingesta de transcripción | Texto pegado directamente o carga de archivo `.txt` | ✅ Implementada |
+| F-02 | Análisis IA (Fase 1) | GPT-4o extrae estructura, puntos clave, métricas y temas visuales | ✅ Implementada |
+| F-03 | Generación de outline (Fase 2) | GPT-4o crea 10-15 slides con título, contenido (ES) y description (EN) | ✅ Implementada |
+| F-04 | Generación de imágenes | Una imagen por slide generada vía OpenAI Image API | ✅ Implementada |
+| F-05 | Progreso en tiempo real | Server-Sent Events muestran cada paso de la generación al usuario | ✅ Implementada |
+| F-06 | Registro e inicio de sesión | Autenticación con email/contraseña y JWT; proyectos privados por usuario | 📋 Pendiente — Entrega 2 |
+| F-07 | Gestión de proyectos | Crear, listar, ver detalle y eliminar presentaciones | ✅ Implementada |
+| F-08 | Configuración global | System prompt, orientación de contenido, estilo visual, dark mode | ✅ Implementada |
+| F-09 | Modo oscuro/claro | Toggle que persiste en base de datos y se aplica globalmente | ✅ Implementada |
+| F-10 | Exportación a PDF | Descarga de la presentación completa | 📋 Pendiente — Entrega 2 |
 
 ### **1.3. Diseño y experiencia de usuario:**
 
-> *(Se completará en la Entrega 2 con capturas de pantalla y/o videotutorial mostrando el flujo principal de la aplicación una vez implementada.)*
+La interfaz sigue un flujo lineal de tres pasos desde el sidebar de navegación:
+
+**Flujo principal E2E:**
+
+1. **`/crear`** — El usuario pega la transcripción en un textarea (mínimo 100 caracteres, validado en tiempo real con contador) o carga un archivo `.txt`. Pulsa "Generar Presentación".
+2. **Modal de progreso** — Aparece automáticamente al iniciar la generación. Muestra paso a paso el avance del pipeline IA (análisis, generación de outline, creación de imágenes) vía SSE, sin necesidad de recargar.
+3. **`/proyectos/:id`** — Al completarse, la app navega automáticamente a la página de detalle. Se muestran todas las slides generadas con su imagen, título y contenido.
+4. **`/proyectos`** — Grid de todas las presentaciones con estado (badge), título y fecha.
+5. **`/ajustes`** — Personalización del comportamiento de la IA: system prompt, orientación del contenido, estilo visual y toggle de modo oscuro.
+
+> 🔐 Las páginas `/login` y `/register` (autenticación multi-usuario) están diseñadas en el PRD y se incorporarán en la Entrega 2.
+
+> 📸 **Capturas de pantalla:** pendientes de añadir en la entrega final.
 
 ### **1.4. Instrucciones de instalación:**
 
-> *(Se completará en la Entrega 2 una vez el código esté operativo, incluyendo los comandos de instalación, configuración de variables de entorno y pasos para arrancar el proyecto en local.)*
+**Requisitos previos:**
+- Java 21 o superior (`JAVA_HOME` configurado)
+- Maven 3.8+
+- Node.js 20+
+- Cuenta OpenAI con API key activa
+
+**1. Clonar el repositorio:**
+```bash
+git clone https://github.com/allenajd3/AI4Devs-finalproject.git
+cd AI4Devs-finalproject
+```
+
+**2. Configurar la API key de OpenAI:**
+
+Exportar como variable de entorno (recomendado):
+```bash
+export OPENAI_API_KEY=sk-proj-...
+```
+
+**3. Arrancar el backend** (desde la carpeta `backend/`):
+```bash
+cd backend
+export JAVA_HOME='C:/JAVA/openjdk-24'   # Ajustar a tu ruta de Java 21+
+mvn spring-boot:run
+```
+
+El backend arranca en `http://localhost:8080`. La base de datos H2 se crea automáticamente en `backend/data/presentaciones.mv.db`.
+
+**4. Arrancar el frontend** (desde la carpeta `frontend/`, en otra terminal):
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend arranca en `http://localhost:5173` y proxifica las llamadas a `/api` al backend automáticamente.
+
+**5. Acceder a la aplicación:**
+
+Abrir `http://localhost:5173` en el navegador y comenzar en la página **Crear** pegando una transcripción.
+
+> 💡 Alternativa en Windows: el script [start-dev.cmd](start-dev.cmd) arranca backend y frontend en dos terminales.
+
+**Resetear la base de datos (si es necesario):**
+```bash
+# Detener el backend primero, luego:
+rm -rf backend/data/
+```
 
 ---
 
@@ -91,9 +151,9 @@ graph TD
     end
 
     subgraph "Backend Spring Boot 4 · Java 21 · :8080"
-        CTRL["Controllers\nAuthController\nProjectController\nContentController SSE\nGlobalSettingsController"]
-        SVC["Services\nAuthService\nContentProcessingServiceImpl\nOpenAIImageService\nLocalStorageService"]
-        REPO["Repositories\nUserRepository\nProjectRepository\nSlideRepository\nGlobalSettingsRepository"]
+        CTRL["Controllers\nProjectController\nContentController SSE\nGlobalSettingsController"]
+        SVC["Services\nContentProcessingServiceImpl\nOpenAIImageService\nLocalStorageService"]
+        REPO["Repositories\nProjectRepository\nSlideRepository\nGlobalSettingsRepository"]
     end
 
     subgraph "Persistencia"
@@ -128,89 +188,116 @@ graph TD
 
 | Componente | Tecnología | Responsabilidad |
 |---|---|---|
-| Páginas | React 19 + TypeScript | `LoginPage`, `RegisterPage`, `CrearPage`, `ProyectosPage`, `ProyectoDetallePage`, `AjustesPage` |
-| Layout | Tailwind CSS 4 | Sidebar colapsable, dark mode global, navegación protegida |
+| Páginas | React 19 + TypeScript | `CrearPage`, `ProyectosPage`, `ProyectoDetallePage`, `AjustesPage` |
+| Layout | Tailwind CSS 4 | Sidebar colapsable, dark mode global, navegación |
 | Hooks | TanStack Query 5 | `useProjects`, `useSlides`, `useContentGeneration` (ciclo de vida SSE) |
-| Servicios | Axios 1.13 | `api.ts` (REST + JWT interceptor), `contentApi.ts` (SSE via EventSource) |
-| Router guard | React Router v7 | Redirige a `/login` si no hay JWT válido en localStorage |
+| Servicios | Axios 1.13 | `api.ts` (REST), `contentApi.ts` (SSE via EventSource) |
+| Tema | `ThemeSync` | Sincroniza el dark mode persistido en settings con la clase `dark` del documento |
 
 **Backend**
 
 | Capa | Clases principales | Responsabilidad |
 |---|---|---|
-| Controller | `AuthController`, `ProjectController`, `ContentController`, `GlobalSettingsController` | Endpoints REST y SSE |
-| Service | `AuthService`, `ContentProcessingServiceImpl`, `OpenAIImageService`, `LocalStorageService`, `GlobalSettingsService` | Lógica de negocio e integración OpenAI |
-| Repository | `UserRepository`, `ProjectRepository`, `SlideRepository`, `GlobalSettingsRepository` | Acceso a datos vía Spring Data JPA |
-| Model | `User`, `Project`, `Slide`, `GlobalSettings` | Entidades JPA |
-| Config | `WebConfig`, `SecurityConfig` | Resource handlers para imágenes, filtro JWT |
+| Controller | `ProjectController`, `ContentController`, `GlobalSettingsController` | Endpoints REST y SSE |
+| Service | `ContentProcessingServiceImpl`, `OpenAIImageService`, `LocalStorageService`, `GlobalSettingsService` | Lógica de negocio e integración OpenAI |
+| Repository | `ProjectRepository`, `SlideRepository`, `GlobalSettingsRepository` | Acceso a datos vía Spring Data JPA |
+| Model | `Project`, `Slide`, `GlobalSettings` | Entidades JPA |
+| Config | `WebConfig` | Resource handlers para servir imágenes en `/images/**` |
+
+> 🔐 Los componentes de autenticación (`AuthController`, `AuthService`, `SecurityConfig`, entidad `User`, `LoginPage`/`RegisterPage` e interceptor JWT) están diseñados en el PRD y se implementarán en la Entrega 2.
 
 ### **2.3. Descripción de alto nivel del proyecto y estructura de ficheros**
 
 ```
-aygPresentacionesIA/
+AI4Devs-finalproject/
 ├── backend/                        # API REST + pipeline IA (Spring Boot 4)
 │   ├── src/main/java/com/ayg/presentaciones/
-│   │   ├── config/                 # WebConfig (recursos estáticos), SecurityConfig (JWT filter)
-│   │   ├── controller/             # AuthController, ProjectController, ContentController, GlobalSettingsController
+│   │   ├── config/                 # WebConfig (recursos estáticos /images/**)
+│   │   ├── controller/             # ProjectController, ContentController (SSE), GlobalSettingsController
 │   │   ├── dto/                    # Objetos de transferencia (request/response) — nunca entidades JPA directas
-│   │   ├── model/                  # Entidades JPA: User, Project, Slide, GlobalSettings + enums
+│   │   ├── model/                  # Entidades JPA: Project, Slide, GlobalSettings + enums
 │   │   ├── repository/             # Interfaces Spring Data JPA
-│   │   └── service/                # Lógica de negocio: pipeline IA, auth, storage, settings
+│   │   └── service/                # Lógica de negocio: pipeline IA, imágenes, storage, settings
 │   ├── src/main/resources/
 │   │   └── application.properties  # Config BD, OpenAI API key, storage path
 │   └── data/                       # BD H2 (presentaciones.mv.db) e imágenes generadas (gitignored)
 │
 ├── frontend/                       # SPA React 19 + TypeScript
 │   └── src/
-│       ├── pages/                  # Una página por ruta: Login, Register, Crear, Proyectos, Detalle, Ajustes
-│       ├── components/             # Layout, SlideCard, GenerationProgress (modal SSE), ThemeSync
-│       ├── hooks/                  # useProjects, useSlides, useContentGeneration, useAuth
-│       ├── services/               # api.ts (Axios + JWT interceptor), contentApi.ts (SSE)
-│       └── types/                  # Tipos TypeScript: Project, Slide, User, Settings
+│       ├── pages/                  # Una página por ruta: Crear, Proyectos, Detalle, Ajustes
+│       ├── components/             # Layout, SlideCard, GenerationProgress (modal SSE), ThemeSync, Logo
+│       ├── hooks/                  # useProjects, useSlides, useContentGeneration
+│       ├── services/               # api.ts (Axios), contentApi.ts (SSE)
+│       └── types/                  # Tipos TypeScript: Project, Slide, Settings
 │
-└── docs/                           # Documentación del proyecto
-    ├── PRD-AYGPresentaciones.md    # PRD completo con todas las historias y tickets
-    └── prompts.md                  # Registro de prompts usados durante el desarrollo
+├── openspec/                       # Specs y changes del flujo spec-driven (OpenSpec)
+│   ├── project.md                  # Contexto del proyecto para los agentes IA
+│   ├── specs/                      # Specs por capacidad (estado actual del sistema)
+│   └── changes/archive/            # Changes completados durante el desarrollo
+│
+├── docs/                           # Documentación del proyecto
+│   └── PRD-AYGPresentaciones.md    # PRD completo con todas las historias y tickets
+├── prompts.md                      # Registro de prompts usados durante el desarrollo
+└── start-dev.cmd                   # Script para arrancar backend + frontend en Windows
 ```
 
 **Patrón de organización:** Feature-agnostic layering en backend (todas las capas en un único módulo dado el tamaño del MVP), y organización por tipo de artefacto en frontend (pages/components/hooks/services/types).
 
 ### **2.4. Infraestructura y despliegue**
 
-> *(Se completará en la Entrega 2 con el diagrama de infraestructura, pipeline CI/CD y la URL del entorno desplegado.)*
+El proyecto se ejecuta actualmente en **entorno local**. El proceso de despliegue previsto para producción es:
+
+```
+Backend  →  mvn clean package  →  JAR ejecutable  →  Dockerfile  →  Contenedor Docker
+Frontend →  npm run build      →  dist/ estático  →  Nginx       →  Servido como SPA
+```
+
+Variables de entorno necesarias en producción:
+- `OPENAI_API_KEY` — clave de la API de OpenAI
+- `SPRING_DATASOURCE_URL` — conexión a PostgreSQL (sustituye H2)
+- `JWT_SECRET` — clave secreta para firmar los tokens JWT (cuando se implemente la autenticación en la Entrega 2)
+- `APP_STORAGE_LOCATION` — ruta para almacenar imágenes generadas
+
+> El pipeline CI/CD (GitHub Actions) y el despliegue en un proveedor cloud (Railway, Render o similar) se abordarán en la Entrega 2.
 
 ### **2.5. Seguridad**
 
-Prácticas de seguridad planificadas para la implementación:
+Prácticas implementadas en el MVP actual:
+
+| Práctica | Implementación |
+|---|---|
+| **Prevención de SQL Injection** | JPA + consultas parametrizadas — ninguna query construida con concatenación de strings |
+| **Validaciones de entrada** | Validación de la transcripción (mínimo 100 caracteres) en frontend y backend |
+| **API Key fuera del código** | `OPENAI_API_KEY` se inyecta como variable de entorno; no se commitea en el repositorio |
+| **DTOs en la API** | Las entidades JPA nunca se exponen directamente en las respuestas |
+
+Prácticas diseñadas para la Entrega 2 (junto con la autenticación):
 
 | Práctica | Diseño previsto |
 |---|---|
-| **Contraseñas hasheadas** | bcrypt vía Spring Security — la contraseña nunca se almacenará en texto plano |
-| **Autenticación stateless** | JWT firmado con clave secreta; expiración de 24h; transmitido en header `Authorization: Bearer` |
-| **Autorización por recurso** | `GET /api/projects` filtrará por `user_id` extraído del JWT — un usuario no podrá acceder a proyectos ajenos |
+| **Contraseñas hasheadas** | bcrypt vía Spring Security — nunca se almacenará la contraseña en texto plano |
+| **Autenticación stateless** | JWT firmado con clave secreta; expiración de 24h; enviado en header `Authorization: Bearer` |
+| **Autorización por recurso** | `GET /api/projects` filtrará por `user_id` del JWT — un usuario no podrá ver proyectos de otro |
 | **Endpoints protegidos** | Filtro JWT interceptará todas las rutas excepto `/api/auth/**`; devolverá 401 sin token válido |
-| **Prevención de SQL Injection** | JPA con consultas parametrizadas — sin concatenación de strings en queries |
-| **Validaciones de entrada** | Jakarta Validation (`@NotBlank`, `@Email`, `@Size`) en todos los DTOs de request |
-| **API Key fuera del código** | `OPENAI_API_KEY` se inyectará como variable de entorno; no se commiteará en el repositorio |
 | **CORS controlado** | `WebConfig` definirá los orígenes permitidos explícitamente (no `*` en producción) |
 
 ### **2.6. Tests**
 
-Estrategia de testing planificada en tres niveles:
+Estrategia de testing en tres niveles (implementación prevista para la Entrega 2):
 
-**Backend — JUnit 5 + Mockito + Spring Boot Test:**
-- *Tests unitarios:* `ContentProcessingServiceImpl` — parsing de JSON de OpenAI, propagación de errores, construcción de prompts con `GlobalSettings`.
-- *Tests de repositorio (`@DataJpaTest`):* `ProjectRepository` — listado por `userId`, eliminación en cascada sobre slides. Usará H2 en memoria, sin configuración adicional.
-- *Tests de controller (`MockMvc`):* `AuthController` — registro con email duplicado, login incorrecto (401), login correcto (JWT). `ProjectController` — protección de endpoints sin token.
+**Backend (JUnit 5 + Mockito + Spring Boot Test):**
+- *Unitarios:* `ContentProcessingServiceImpl` — verificar parsing de JSON de OpenAI, propagación de errores a estado `ERROR`, construcción de prompts con `GlobalSettings`.
+- *Repositorios (`@DataJpaTest`):* `ProjectRepository` — crear/listar por `userId`, eliminar en cascada sobre slides. Usa H2 en memoria, sin configuración extra.
+- *Controllers (`MockMvc`):* `AuthController` — registro con email duplicado devuelve 409; login incorrecto devuelve 401; login correcto devuelve JWT. `ProjectController` — endpoints devuelven 401 sin token.
 
-**Frontend — Vitest + React Testing Library:**
-- `CrearPage`: validación del umbral de 100 caracteres en el botón "Generar".
-- `GenerationProgress`: respuesta a eventos SSE mockeados y navegación al completarse.
-- `SlideCard`: renderizado con imagen vs. placeholder.
+**Frontend (Vitest + React Testing Library):**
+- `CrearPage`: el botón "Generar" se desactiva con menos de 100 caracteres y se activa al superarlos.
+- `GenerationProgress`: al recibir eventos SSE mockeados (via MSW), el modal muestra el paso actual y navega al completarse.
+- `SlideCard`: renderiza imagen si `imageUrl` existe; muestra placeholder si es `null`.
 
-**E2E — Playwright:**
-- Flujo completo: login → crear proyecto → modal de progreso → página de detalle con slides.
-- Guard de rutas: acceso a `/crear` sin autenticación redirige a `/login`.
+**E2E (Playwright):**
+- Flujo completo: login → crear proyecto con transcripción → modal de progreso → página de detalle con slides generadas.
+- Guard de rutas: acceder a `/crear` sin autenticación redirige a `/login`.
 
 ---
 
@@ -218,20 +305,12 @@ Estrategia de testing planificada en tres niveles:
 
 ### **3.1. Diagrama del modelo de datos:**
 
+Modelo implementado actualmente (la entidad `User` y la relación `user_id` en `Project` se incorporarán con la autenticación en la Entrega 2):
+
 ```mermaid
 erDiagram
-    USER {
-        UUID id PK
-        VARCHAR username UK "único, not null"
-        VARCHAR email UK "único, not null"
-        VARCHAR password_hash "bcrypt, not null"
-        TIMESTAMP created_at "auto"
-        TIMESTAMP updated_at "auto"
-    }
-
     PROJECT {
         UUID id PK
-        UUID user_id FK "not null"
         VARCHAR title "generado por IA"
         TEXT content "transcripción original, not null"
         VARCHAR status "DRAFT|GENERATING|COMPLETED|ERROR"
@@ -258,29 +337,16 @@ erDiagram
         BOOLEAN dark_mode "default false"
     }
 
-    USER ||--o{ PROJECT : "posee"
     PROJECT ||--o{ SLIDE : "contiene (cascade all)"
 ```
 
 ### **3.2. Descripción de entidades principales:**
 
-**User** — Usuario registrado en el sistema.
+**Project** — Presentación completa.
 
 | Campo | Tipo | Restricciones | Descripción |
 |---|---|---|---|
 | `id` | UUID | PK, auto-generado | Identificador único |
-| `username` | VARCHAR | UNIQUE, NOT NULL | Nombre de usuario elegido en el registro |
-| `email` | VARCHAR | UNIQUE, NOT NULL | Email usado para el login |
-| `password_hash` | VARCHAR | NOT NULL | Contraseña hasheada con bcrypt (factor 10) |
-| `created_at` | TIMESTAMP | NOT NULL, auto | Fecha/hora de registro |
-| `updated_at` | TIMESTAMP | NOT NULL, auto | Fecha/hora de última modificación |
-
-**Project** — Presentación completa, siempre asociada a un usuario.
-
-| Campo | Tipo | Restricciones | Descripción |
-|---|---|---|---|
-| `id` | UUID | PK, auto-generado | Identificador único |
-| `user_id` | UUID | FK → User, NOT NULL | Usuario propietario |
 | `title` | VARCHAR | — | Título ejecutivo generado por IA |
 | `content` | TEXT | NOT NULL | Transcripción original de entrada |
 | `status` | ENUM | NOT NULL | `DRAFT` · `GENERATING` · `COMPLETED` · `ERROR` |
@@ -310,6 +376,17 @@ erDiagram
 | `visual_style` | TEXT | nullable | Descripción del estilo visual para las imágenes |
 | `dark_mode` | BOOLEAN | NOT NULL, default `false` | Flag de tema oscuro en la UI |
 
+**User** *(Entrega 2)* — Usuario registrado en el sistema. Añadirá la columna `user_id` (FK) a `Project` para que cada usuario solo vea sus presentaciones.
+
+| Campo | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| `id` | UUID | PK, auto-generado | Identificador único |
+| `username` | VARCHAR | UNIQUE, NOT NULL | Nombre de usuario elegido en el registro |
+| `email` | VARCHAR | UNIQUE, NOT NULL | Email usado para el login |
+| `password_hash` | VARCHAR | NOT NULL | Contraseña hasheada con bcrypt (factor 10) |
+| `created_at` | TIMESTAMP | NOT NULL, auto | Fecha/hora de registro |
+| `updated_at` | TIMESTAMP | NOT NULL, auto | Fecha/hora de última modificación |
+
 ---
 
 ## 4. Especificación de la API
@@ -328,51 +405,11 @@ servers:
 
 paths:
 
-  /auth/login:
-    post:
-      summary: Iniciar sesión
-      description: Autentica al usuario con email y contraseña. Devuelve un JWT para usar en el resto de endpoints.
-      tags: [Autenticación]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [email, password]
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: alberto@empresa.com
-                password:
-                  type: string
-                  minLength: 8
-                  example: MiPassword123!
-      responses:
-        '200':
-          description: Login correcto — devuelve JWT
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                  expiresIn:
-                    type: integer
-                    example: 86400
-        '401':
-          description: Credenciales incorrectas
-
   /projects:
     post:
       summary: Crear proyecto
       description: Crea un nuevo proyecto con la transcripción proporcionada. El título se auto-genera en la fase de generación.
       tags: [Proyectos]
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -411,8 +448,8 @@ paths:
                   createdAt:
                     type: string
                     format: date-time
-        '401':
-          description: No autenticado
+        '400':
+          description: Transcripción inválida (menos de 100 caracteres)
 
   /projects/{id}/generate-content:
     get:
@@ -427,8 +464,6 @@ paths:
         - `complete`: finalización correcta con projectId
         - `error`: error en el pipeline con mensaje descriptivo
       tags: [Generación]
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -454,24 +489,48 @@ paths:
 
                 event: complete
                 data: {"projectId":"550e8400-e29b-41d4-a716-446655440000"}
-        '401':
-          description: No autenticado
         '404':
-          description: Proyecto no encontrado o no pertenece al usuario
+          description: Proyecto no encontrado
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+  /projects/{id}/slides:
+    get:
+      summary: Obtener slides de un proyecto
+      tags: [Generación]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de slides ordenadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: string, format: uuid }
+                    order: { type: integer, example: 1 }
+                    title: { type: string, example: "Resultados Q3: Superando Expectativas" }
+                    content: { type: string }
+                    imagePrompt: { type: string }
+                    imageUrl: { type: string, example: /images/project-550e8400-slide-1.png }
+                    status: { type: string, enum: [PENDING, GENERATING, COMPLETED, ERROR] }
+        '404':
+          description: Proyecto no encontrado
 ```
+
+> 🔐 Los endpoints de autenticación (`/auth/register`, `/auth/login`) y la protección con `bearerAuth` (JWT) están especificados en el [PRD](docs/PRD-AYGPresentaciones.md) y se añadirán en la Entrega 2.
 
 ---
 
 ## 5. Historias de Usuario
 
-**Historia de Usuario 1 — Registro e inicio de sesión**
+**Historia de Usuario 1 — Registro e inicio de sesión** *(planificada — Entrega 2)*
 
 > Como profesional que quiere usar la herramienta, quiero poder registrarme con mi email y contraseña e iniciar sesión, para que mis presentaciones sean privadas y accesibles solo para mí.
 
@@ -523,8 +582,8 @@ components:
   - Se emiten eventos `progress` en cada fase del pipeline (análisis, outline, por cada imagen).
   - Al finalizar correctamente, se emite `event: complete` con `{"projectId": "..."}` y el `Project.status` se actualiza a `COMPLETED`.
   - Si ocurre una excepción, se emite `event: error` con un mensaje descriptivo y `Project.status` se actualiza a `ERROR`.
-  - El endpoint devuelve `401` si el JWT es inválido o ausente.
-  - El endpoint devuelve `404` si el proyecto no existe o no pertenece al usuario autenticado.
+  - El endpoint devuelve `404` si el proyecto no existe.
+  - *(Entrega 2)* El endpoint devolverá `401` si el JWT es inválido o ausente.
 
 ---
 
@@ -547,18 +606,44 @@ components:
 
 - **ID:** TK-001
 - **Tipo:** Base de datos
-- **Historia relacionada:** US-001, US-002, US-004, US-000
-- **Descripción:** Definir las entidades JPA del sistema: `User`, `Project`, `Slide` y `GlobalSettings`. Configurar H2 file-based con `ddl-auto=update` para desarrollo. La relación `User → Project` es one-to-many; la relación `Project → Slide` es one-to-many con `CascadeType.ALL` y `orphanRemoval=true`. `GlobalSettings` implementa el patrón singleton (siempre `id=1`). Todos los IDs son UUIDs auto-generados excepto `GlobalSettings.id` que es `BIGINT`.
+- **Historia relacionada:** US-001, US-002, US-004
+- **Descripción:** Definir las entidades JPA del sistema: `Project`, `Slide` y `GlobalSettings`. Configurar H2 file-based con `ddl-auto=update` para desarrollo. La relación `Project → Slide` es one-to-many con `CascadeType.ALL` y `orphanRemoval=true`. `GlobalSettings` implementa el patrón singleton (siempre `id=1`). Todos los IDs son UUIDs auto-generados excepto `GlobalSettings.id` que es `BIGINT`. La entidad `User` y su relación con `Project` se añadirán con la autenticación (Entrega 2).
 - **Criterios de aceptación:**
   - El backend arranca y la base de datos se crea automáticamente en `backend/data/presentaciones.mv.db`.
   - La consola H2 es accesible en `http://localhost:8080/h2-console` (solo en perfil de desarrollo).
   - `DELETE` sobre un `Project` elimina en cascada todos sus `Slide` asociados.
-  - `DELETE` sobre un `User` elimina en cascada todos sus `Project` (y por tanto sus `Slide`).
   - `GlobalSettings` siempre tiene exactamente una fila con `id=1`; el servicio crea la fila con valores por defecto si no existe.
-  - Los campos marcados como `UNIQUE` (username, email) lanzan excepción de integridad si se intenta duplicar.
 
 ---
 
 ## 7. Pull Requests
 
-> *(Se documentarán en la Entrega 2 una vez realizados los PRs de implementación, incluyendo título, descripción, rama y URL de cada uno.)*
+El desarrollo se ha realizado de forma incremental en la rama `feature-entrega2-AJD`, siguiendo el flujo spec-driven de OpenSpec: cada funcionalidad tiene su change (proposal → design → tasks → apply → archive) y su commit correspondiente. Los changes completados pueden consultarse en [openspec/changes/archive/](openspec/changes/archive/).
+
+**Pull Request 1 — Creación de base del proyecto y UI inicial**
+
+- **Rama:** `feature-entrega2-AJD`
+- **Descripción:** Setup completo del monorepo. Backend: inicialización de Spring Boot 4 con Java 21, configuración de H2 file-based, entidades JPA (`Project`, `Slide`), repositorios y CRUD REST de proyectos con DTOs. Frontend: setup de React 19 + TypeScript + Vite 7 + Tailwind CSS 4 + React Router + TanStack Query, proxy Vite a `/api`, Layout con sidebar y páginas base (Crear, Proyectos, Detalle, Ajustes).
+- **Changes OpenSpec:** `define-mvp-specs`, `config-base-backend`, `implement-project-mgmt`, `frontend-mvp-ui`
+- **Tickets cubiertos:** TK-001, TK-002, TK-003, TK-004
+- **URL:** *(se añadirá al abrir el PR hacia `main`)*
+
+---
+
+**Pull Request 2 — Integración con OpenAI para análisis y generación de contenido**
+
+- **Rama:** `feature-entrega2-AJD`
+- **Descripción:** Implementación del pipeline de generación de 2 fases en `ContentProcessingServiceImpl`: Fase 1 (análisis de transcripción con GPT-4o) y Fase 2 (generación de outline JSON con 10-15 slides). Parsing robusto del JSON de respuesta (manejo de markdown code blocks) con records `SlideData`/`SlideOutline`. SSE endpoint en `ContentController` con `SseEmitter` y `ExecutorService`. Modal `GenerationProgress` en el frontend con hook `useContentGeneration` para la suscripción SSE. Persistencia H2 en fichero.
+- **Changes OpenSpec:** `implement-content-processing`, `integrate-frontend-content-processing`, `db-h2-file`, `refactor-content-generation`
+- **Tickets cubiertos:** TK-005, TK-006, TK-007, TK-008
+- **URL:** *(se añadirá al abrir el PR hacia `main`)*
+
+---
+
+**Pull Request 3 — Generación de imágenes, configuración y UX**
+
+- **Rama:** `feature-entrega2-AJD`
+- **Descripción:** Integración de la API de generación de imágenes de OpenAI (`gpt-image-1`): `OpenAIImageService` (llamada REST, decodificación de base64) y `LocalStorageService` (guardado de PNG en `backend/data/images/`), servidas como recursos estáticos vía `WebConfig`. Página de Ajustes conectada a la configuración global, identidad visual AyG, modo oscuro persistido y sidebar colapsable.
+- **Changes OpenSpec:** `implement-image-generation`, `image-generation-prompt-mods`, `config-page`, `ui-ayg`, `dark-mode`, `collapsible-sidebar`
+- **Tickets cubiertos:** TK-009, TK-010, TK-011, TK-012, TK-013
+- **URL:** *(se añadirá al abrir el PR hacia `main`)*

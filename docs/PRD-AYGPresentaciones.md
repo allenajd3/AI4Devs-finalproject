@@ -25,7 +25,7 @@
 | **Nombre** | AyG PresentacionesIA |
 | **Descripción corta** | Genera presentaciones ejecutivas profesionales a partir de transcripciones de reuniones usando GPT-4o |
 | **Repositorio de código** | https://github.com/allenajd3/AI4Devs-finalproject |
-| **Estado** | En desarrollo |
+| **Estado** | MVP funcional — autenticación, tests y despliegue planificados para la Entrega 2 |
 | **Autor** | AJD |
 | **Fecha de inicio** | Abril 2026 |
 | **Stack backend** | Java 21 · Spring Boot 4.0.2 · H2 Database · OpenAI API |
@@ -56,16 +56,18 @@ Profesionales y directivos que:
 
 | # | Funcionalidad | Descripción | Estado |
 |---|---|---|---|
-| F-01 | Ingesta de transcripción | Texto pegado directamente o carga de archivo `.txt` | 📋 Pendiente |
-| F-02 | Análisis IA (Fase 1) | GPT-4o extrae estructura, puntos clave, métricas y temas visuales | 📋 Pendiente |
-| F-03 | Generación de outline (Fase 2) | GPT-4o crea 10-15 slides con título, contenido (ES) y description (EN) | 📋 Pendiente |
-| F-04 | Generación de imágenes | Una imagen por slide generada vía OpenAI Image API / Pollinations | 📋 Pendiente |
-| F-05 | Progreso en tiempo real | Server-Sent Events muestran cada paso de la generación al usuario | 📋 Pendiente |
-| F-06 | Gestión de proyectos | Crear, listar, ver detalle y eliminar presentaciones | 📋 Pendiente |
-| F-07 | Configuración global | System prompt, orientación de contenido, estilo visual, dark mode | 📋 Pendiente |
-| F-08 | Modo oscuro/claro | Toggle que persiste en base de datos y se aplica globalmente | 📋 Pendiente |
-| F-09 | Exportación a PDF | Descarga de la presentación completa | 📋 Pendiente |
-| F-10 | Edición de slides | Modificar slides individuales tras la generación | 📋 Pendiente |
+| F-01 | Ingesta de transcripción | Texto pegado directamente o carga de archivo `.txt` | ✅ Implementada |
+| F-02 | Análisis IA (Fase 1) | GPT-4o extrae estructura, puntos clave, métricas y temas visuales | ✅ Implementada |
+| F-03 | Generación de outline (Fase 2) | GPT-4o crea 10-15 slides con título, contenido (ES) y description (EN) | ✅ Implementada |
+| F-04 | Generación de imágenes | Una imagen por slide generada vía OpenAI Image API | ✅ Implementada |
+| F-05 | Progreso en tiempo real | Server-Sent Events muestran cada paso de la generación al usuario | ✅ Implementada |
+| F-06 | Gestión de proyectos | Crear, listar, ver detalle y eliminar presentaciones | ✅ Implementada |
+| F-07 | Configuración global | System prompt, orientación de contenido, estilo visual, dark mode | ✅ Implementada |
+| F-08 | Modo oscuro/claro | Toggle que persiste en base de datos y se aplica globalmente | ✅ Implementada |
+| F-09 | Exportación a PDF | Descarga de la presentación completa | 📋 Pendiente — Entrega 2 |
+| F-10 | Edición de slides | Modificar slides individuales tras la generación | 📋 Pendiente — Entrega 2 |
+
+> 🔐 La autenticación multi-usuario (US-000 / TK-000) está diseñada en este PRD y planificada para la Entrega 2; el MVP actual opera en modo single-user local.
 
 ### 2.5 Diseño y experiencia de usuario
 
@@ -428,7 +430,7 @@ Response `200 OK`: el mismo objeto actualizado.
 
 ---
 
-**US-000 — Registro e inicio de sesión**
+**US-000 — Registro e inicio de sesión** *(planificada — Entrega 2)*
 
 > Como profesional que quiere usar la herramienta, quiero poder registrarme con mi email y contraseña e iniciar sesión, para que mis presentaciones sean privadas y accesibles solo para mí.
 
@@ -536,7 +538,7 @@ Response `200 OK`: el mismo objeto actualizado.
 
 ---
 
-**TK-000 — Autenticación: registro, login y protección de rutas**
+**TK-000 — Autenticación: registro, login y protección de rutas** *(planificado — Entrega 2)*
 
 - **Historia:** US-000
 - **Descripción:** Implementar el sistema de autenticación completo. Backend: entidad `User`, `UserRepository`, `AuthService` con bcrypt para hashing de contraseñas, generación y validación de JWT, y `AuthController` con endpoints `/auth/register` y `/auth/login`. Filtro JWT para proteger todos los endpoints excepto los de auth. Frontend: páginas de registro y login, almacenamiento del token (localStorage/sessionStorage), interceptor Axios que añade el header `Authorization: Bearer` en cada petición, y guard de rutas que redirige al login si no hay token.
@@ -728,25 +730,27 @@ Response `200 OK`: el mismo objeto actualizado.
 
 ## 8. Pull Requests
 
-PRs planificados para el desarrollo del proyecto en https://github.com/allenajd3/AI4Devs-finalproject:
+El desarrollo se ha realizado de forma incremental en la rama `feature-entrega2-AJD`, con un commit por change de OpenSpec (ver `openspec/changes/archive/`). Correspondencia entre lo planificado y lo implementado:
 
-| PR | Título | Tickets cubiertos |
-|---|---|---|
-| PR-01 | Fundación: Spring Boot + H2 + entidades JPA + setup React | TK-000, TK-001, TK-002, TK-003, TK-004 |
-| PR-02 | Pipeline IA: análisis GPT-4o + generación de outline JSON | TK-005, TK-006 |
-| PR-03 | SSE: endpoint de generación con progreso en tiempo real | TK-007, TK-008 |
-| PR-04 | Generación de imágenes + almacenamiento local | TK-009, TK-010 |
-| PR-05 | Configuración global: GlobalSettings + AjustesPage | TK-011, TK-012 |
-| PR-06 | UX: dark mode + sidebar colapsable + vistas de proyectos | TK-013, TK-014 |
-| PR-07 | Tests: unitarios, integración y E2E | TK-T01 a TK-T05 |
+| PR | Título | Tickets cubiertos | Estado |
+|---|---|---|---|
+| PR-01 | Fundación: Spring Boot + H2 + entidades JPA + setup React | TK-001, TK-002, TK-003, TK-004 | ✅ Implementado |
+| PR-02 | Pipeline IA: análisis GPT-4o + generación de outline JSON | TK-005, TK-006 | ✅ Implementado |
+| PR-03 | SSE: endpoint de generación con progreso en tiempo real | TK-007, TK-008 | ✅ Implementado |
+| PR-04 | Generación de imágenes + almacenamiento local | TK-009, TK-010 | ✅ Implementado |
+| PR-05 | Configuración global: GlobalSettings + AjustesPage | TK-011, TK-012 | ✅ Implementado |
+| PR-06 | UX: dark mode + sidebar colapsable + vistas de proyectos | TK-013, TK-014 | ✅ Implementado |
+| PR-07 | Autenticación (TK-000) + Tests: unitarios, integración y E2E | TK-000, TK-T01 a TK-T05 | 📋 Entrega 2 |
 
-> Las URLs de cada PR se completarán conforme se vayan realizando durante la implementación.
+> Las URLs de los PRs se completarán al abrirlos hacia `main` en el repositorio de entrega.
 
 ---
 
 ## 9. Suite de tests
 
 ### 9.1 Estrategia general
+
+> 📋 La suite de tests está diseñada pero pendiente de implementación (planificada para la Entrega 2 junto con la autenticación).
 
 La suite de tests cubre tres niveles: unitarios (lógica aislada), integración (capas colaborando con BD real) y E2E (flujo completo desde el navegador). Cada nivel tiene una herramienta específica elegida por su alineación con el stack del proyecto.
 
