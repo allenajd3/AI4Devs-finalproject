@@ -1,0 +1,47 @@
+schema: spec-driven
+
+context: |
+  Project: AyG PresentacionesIA
+  Domain: Generador automático de presentaciones ejecutivas a partir de transcripciones de reuniones, potenciado por GPT-4o e IA de imágenes.
+
+  Tech stack:
+    Backend: Java 21, Spring Boot 4.0.2, H2 Database (file-based), OpenAI REST API (sin Spring AI)
+    Frontend: React 19, TypeScript 5.9, Vite 7, Tailwind CSS 4, TanStack Query 5, React Router v7
+    Auth: JWT + bcrypt via Spring Security
+    Real-time: Server-Sent Events (SSE) para progreso de generación
+    Images: OpenAI Image API (gpt-image-1), almacenamiento local en backend/data/images/
+
+  Architecture:
+    Backend: Layered (Controller → Service → Repository), interfaces Strategy para ImageService y StorageService
+    Frontend: Component-based, hooks para estado asíncrono (TanStack Query), páginas por ruta
+    Communication: REST + SSE, proxy Vite /api → localhost:8080
+    Database: H2 file-based con ddl-auto=update (MVP), migración a PostgreSQL planificada para Entrega 2
+
+  Entities: User, Project, Slide, GlobalSettings (singleton id=1)
+  Pipeline IA: Fase 1 (análisis GPT-4o) → Fase 2 (outline JSON) → Generación de imágenes por slide
+
+  Conventions:
+    - Conventional commits en español
+    - DTOs para API responses (nunca exponer entidades JPA)
+    - UUIDs para IDs (excepto GlobalSettings que usa BIGINT)
+    - Contenido de slides en español, image prompts en inglés
+    - Jakarta Validation en todos los DTOs de request
+    - OpenAI API key como variable de entorno (nunca en código)
+
+  PRD reference: docs/PRD-AYGPresentaciones.md
+  Prompts reference: prompts.md
+
+rules:
+  proposal:
+    - Referenciar siempre la historia de usuario (US-XXX) y ticket (TK-XXX) del PRD cuando aplique
+    - Incluir sección "Impacto en el pipeline IA" si el cambio afecta a la generación
+    - Máximo 500 palabras
+  design:
+    - Incluir diagrama ASCII de la arquitectura afectada
+    - Especificar si el cambio requiere nuevos endpoints, entidades o migraciones
+    - Indicar cambios en el modelo de datos si los hay
+  tasks:
+    - Separar tareas de backend y frontend claramente
+    - Cada tarea debe ser implementable en menos de 2 horas
+    - Incluir tarea de testing para cada funcionalidad
+    - Orden de implementación: modelo → servicio → controller → frontend
