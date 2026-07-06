@@ -1,7 +1,15 @@
 package com.ayg.presentaciones.model;
 
-import jakarta.persistence.*;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "slides")
@@ -17,6 +25,12 @@ public class Slide {
     @Column(name = "slide_order", nullable = false)
     private Integer order;
 
+    @Column(columnDefinition = "TEXT")
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String imagePrompt;
 
@@ -30,9 +44,20 @@ public class Slide {
     public Slide() {
     }
 
+    // Constructor anterior - mantener para compatibilidad
     public Slide(UUID projectId, Integer order, String imagePrompt) {
         this.projectId = projectId;
         this.order = order;
+        this.imagePrompt = imagePrompt;
+        this.status = SlideStatus.PENDING;
+    }
+
+    // Nuevo constructor con title y content
+    public Slide(UUID projectId, Integer order, String title, String content, String imagePrompt) {
+        this.projectId = projectId;
+        this.order = order;
+        this.title = title;
+        this.content = content;
         this.imagePrompt = imagePrompt;
         this.status = SlideStatus.PENDING;
     }
@@ -59,6 +84,22 @@ public class Slide {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getImagePrompt() {

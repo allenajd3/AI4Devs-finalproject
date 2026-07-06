@@ -95,6 +95,8 @@ public class ContentController {
                 .map(slide -> new SlideResponse(
                         slide.getId(),
                         slide.getOrder(),
+                        slide.getTitle(),
+                        slide.getContent(),
                         slide.getImagePrompt(),
                         slide.getImageUrl(),
                         slide.getStatus()
