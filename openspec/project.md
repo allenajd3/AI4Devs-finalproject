@@ -16,15 +16,20 @@ El sistema utiliza Inteligencia Artificial para analizar el contenido aportado p
 - **Language:** Java 21 (LTS)
 - **Framework:** Spring Boot 4.0.x
 - **Build Tool:** Maven
-- **Database (Proposed):** PostgreSQL
-- **AI Integration (Proposed):** Spring AI / LangChain4j (para conexión con LLMs como OpenAI/Azure OpenAI)
+- **Database:** H2 (in-memory para MVP, PostgreSQL para producción)
+- **AI Integration:** Spring AI 1.0.0-M6 con OpenAI GPT-4o (implementado)
+- **Content Processing:** Análisis de transcripciones, generación de títulos, extracción de puntos clave y generación de prompts para diapositivas
 - **PDF Generation:** Slides will be generated as individual images using Nano Banana via prompt engineering, then assembled into a final PDF document. This allows for rich, creative, and visually consistent slides.
 
-### Frontend (Proposed - Future Implementation)
-- **Library:** React
+### Frontend (Implementado)
+- **Library:** React 18
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS (para facilitar la personalización de temas corporativos)
+- **Styling:** Tailwind CSS v4 (para facilitar la personalización de temas corporativos)
 - **Build Tool:** Vite
+- **Data Fetching:** TanStack Query (React Query)
+- **Routing:** React Router v6
+- **WebSocket:** STOMP + SockJS (para comunicación en tiempo real)
+- **Real-time Updates:** Server-Sent Events (SSE) para feedback de generación
 
 ## Project Conventions
 
@@ -59,5 +64,9 @@ El sistema utiliza Inteligencia Artificial para analizar el contenido aportado p
 - **Presentación Ejecutiva:** Documento conciso, orientado a la toma de decisiones, visualmente limpio.
 
 ## External Dependencies
-- **LLM Provider:** API de OpenAI (GPT-4o/mini) o equivalente para tareas de NLP (resumen, extracción).
-- **PDF Engine:** Motor de renderizado de documentos.
+- **LLM Provider:** API de OpenAI (GPT-4o) implementado vía Spring AI - utilizado para:
+  - Análisis y limpieza de transcripciones
+  - Generación de títulos ejecutivos
+  - Generación de prompts de imagen para diapositivas (estructura no lineal: intro/nudo/desenlace)
+- **Image Generation (Próximo):** Nano Banana - generará cada diapositiva como imagen basándose en los prompts.
+- **PDF Engine (Próximo):** Motor de ensamblaje de imágenes en PDF.
