@@ -1,4 +1,9 @@
-## ADDED Requirements
+# frontend-content-generation Specification
+
+## Purpose
+Enable real-time content generation feedback in the frontend using Server-Sent Events (SSE).
+
+## Requirements
 
 ### Requirement: SSE Connection for Content Generation
 The frontend SHALL connect to the backend SSE endpoint to receive real-time progress updates during content generation.

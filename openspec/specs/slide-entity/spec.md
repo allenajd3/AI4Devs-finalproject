@@ -1,4 +1,9 @@
-## ADDED Requirements
+# slide-entity Specification
+
+## Purpose
+Define the Slide entity structure for storing presentation slide data with image prompts.
+
+## Requirements
 
 ### Requirement: Slide Entity
 The system SHALL support a Slide entity representing a single slide in a presentation, containing only image-related data.

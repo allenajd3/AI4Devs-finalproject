@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { Project, ProjectSummary, ProjectCreateRequest } from '../types/project';
+import type { GlobalSettings } from '../types/settings';
 
 const api = axios.create({
   baseURL: '/api',
@@ -26,6 +27,18 @@ export const projectsApi = {
 
   deleteProject: async (id: string): Promise<void> => {
     await api.delete(`/projects/${id}`);
+  },
+};
+
+export const settingsApi = {
+  getSettings: async (): Promise<GlobalSettings> => {
+    const response = await api.get<GlobalSettings>('/settings');
+    return response.data;
+  },
+
+  updateSettings: async (data: GlobalSettings): Promise<GlobalSettings> => {
+    const response = await api.put<GlobalSettings>('/settings', data);
+    return response.data;
   },
 };
 

@@ -1,4 +1,9 @@
-## ADDED Requirements
+# system-settings Specification
+
+## Purpose
+Define global settings for presentation generation that apply to all projects.
+
+## Requirements
 
 ### Requirement: Global Settings Entity
 The system SHALL store global configuration for presentation generation applied to all projects.

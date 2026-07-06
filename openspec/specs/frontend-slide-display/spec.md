@@ -1,4 +1,9 @@
-## ADDED Requirements
+# frontend-slide-display Specification
+
+## Purpose
+Display generated slides in the project detail view with proper layout and status indicators.
+
+## Requirements
 
 ### Requirement: Fetch and Display Slides
 The project detail page SHALL fetch and display all slides for a project.

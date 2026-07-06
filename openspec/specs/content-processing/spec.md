@@ -1,4 +1,9 @@
-## ADDED Requirements
+# content-processing Specification
+
+## Purpose
+Define how transcriptions are processed using OpenAI LLM to generate executive presentations with structured slides.
+
+## Requirements
 
 ### Requirement: OpenAI Integration
 The system SHALL use OpenAI for analysis and structure generation, with model configurable via application properties (default gpt-4o).
